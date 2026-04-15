@@ -1,0 +1,362 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum ChallengeType {
+  ROOM
+  BOX
+  CTF
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum ContainerStatus {
+  RUNNING
+  STOPPED
+  DESTROYED
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum PathProgressStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+model User {
+  id               String                  @id @default(cuid())
+  universityId     String                  @unique
+  name             String
+  email            String                  @unique
+  passwordHash     String
+  role             Role                    @default(STUDENT)
+  points           Int                     @default(0)
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  sessions         Session[]
+  submissions      Submission[]
+  userFlags        UserFlag[]
+  challengeProgress UserChallengeProgress[]
+  pathProgress     UserPathProgress[]
+  containerSessions ContainerSession[]
+  groupMembers     GroupMember[]
+  ctfTeamMembers   CTFTeamMember[]
+  certificates     Certificate[]
+  createdChallenges Challenge[]            @relation("CreatedByUser")
+  createdPaths     Path[]                 @relation("CreatedByUser")
+  createdGroups    Group[]                @relation("CreatedByUser")
+  createdCTFEvents CTFEvent[]             @relation("CreatedByUser")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model RateLimitLog {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  attemptedAt DateTime @default(now())
+}
+
+model Challenge {
+  id             String                  @id @default(cuid())
+  title          String
+  description    String                  @db.Text
+  type           ChallengeType
+  difficulty     Difficulty
+  points         Int
+  dockerImage    String?
+  templateConfig Json?
+  isPublished    Boolean                 @default(false)
+  createdById    String
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+
+  createdBy      User                    @relation("CreatedByUser", fields: [createdById], references: [id])
+  tasks          Task[]
+  submissions    Submission[]
+  userFlags      UserFlag[]
+  challengeProgress UserChallengeProgress[]
+  containerSessions ContainerSession[]
+  pathSteps      PathStep[]
+  ctfEventChallenges CTFEventChallenge[]
+
+  @@index([createdById])
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  challengeId String
+  order       Int
+  question    String     @db.Text
+  answer      String     @db.Text
+  points      Int
+
+  challenge   Challenge  @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  hints       Hint[]
+  submissions Submission[]
+
+  @@index([challengeId])
+}
+
+model Hint {
+  id        String   @id @default(cuid())
+  taskId    String
+  content   String   @db.Text
+  pointCost Int
+
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+}
+
+model Path {
+  id             String               @id @default(cuid())
+  title          String
+  description    String               @db.Text
+  badgeUrl       String?
+  isPublished    Boolean              @default(false)
+  createdById    String
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  createdBy      User                 @relation("CreatedByUser", fields: [createdById], references: [id])
+  pathSteps      PathStep[]
+  userPathProgress UserPathProgress[]
+  certificates   Certificate[]
+
+  @@index([createdById])
+}
+
+model PathStep {
+  id          String   @id @default(cuid())
+  pathId      String
+  challengeId String
+  order       Int
+
+  path        Path     @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+
+  @@unique([pathId, challengeId])
+  @@index([pathId])
+  @@index([challengeId])
+}
+
+model UserFlag {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  flagHash    String
+  generatedAt DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+
+  @@unique([userId, challengeId])
+  @@index([userId])
+  @@index([challengeId])
+}
+
+model Submission {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  taskId      String?
+  answer      String
+  isCorrect   Boolean
+  submittedAt DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  task        Task?    @relation(fields: [taskId], references: [id])
+
+  @@index([userId])
+  @@index([challengeId])
+}
+
+model UserChallengeProgress {
+  id          String         @id @default(cuid())
+  userId      String
+  challengeId String
+  status      ProgressStatus @default(NOT_STARTED)
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  user        User           @relation(fields: [userId], references: [id])
+  challenge   Challenge      @relation(fields: [challengeId], references: [id])
+
+  @@unique([userId, challengeId])
+  @@index([userId])
+  @@index([challengeId])
+}
+
+model UserPathProgress {
+  id          String             @id @default(cuid())
+  userId      String
+  pathId      String
+  status      PathProgressStatus @default(IN_PROGRESS)
+  startedAt   DateTime           @default(now())
+  completedAt DateTime?
+
+  user        User               @relation(fields: [userId], references: [id])
+  path        Path               @relation(fields: [pathId], references: [id])
+
+  @@unique([userId, pathId])
+  @@index([userId])
+  @@index([pathId])
+}
+
+model ContainerSession {
+  id               String           @id @default(cuid())
+  userId           String
+  challengeId      String
+  containerId      String
+  wsUrl            String
+  status           ContainerStatus  @default(RUNNING)
+  lastActivityAt   DateTime
+  expiresAt        DateTime
+  createdAt        DateTime         @default(now())
+
+  user             User             @relation(fields: [userId], references: [id])
+  challenge        Challenge        @relation(fields: [challengeId], references: [id])
+
+  @@unique([userId, challengeId])
+  @@index([userId])
+  @@index([challengeId])
+}
+
+model Group {
+  id          String        @id @default(cuid())
+  name        String
+  inviteCode  String        @unique
+  createdById String
+  createdAt   DateTime      @default(now())
+
+  createdBy   User          @relation("CreatedByUser", fields: [createdById], references: [id])
+  members     GroupMember[]
+
+  @@index([createdById])
+}
+
+model GroupMember {
+  id        String   @id @default(cuid())
+  groupId   String
+  userId    String
+  joinedAt  DateTime @default(now())
+
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([groupId, userId])
+  @@index([groupId])
+  @@index([userId])
+}
+
+model CTFEvent {
+  id               String               @id @default(cuid())
+  title            String
+  description      String               @db.Text
+  startsAt         DateTime
+  endsAt           DateTime
+  isPublished      Boolean              @default(false)
+  createdById      String
+  createdAt        DateTime             @default(now())
+
+  createdBy        User                 @relation("CreatedByUser", fields: [createdById], references: [id])
+  ctfEventChallenges CTFEventChallenge[]
+  teams            CTFTeam[]
+
+  @@index([createdById])
+}
+
+model CTFEventChallenge {
+  id          String    @id @default(cuid())
+  eventId     String
+  challengeId String
+
+  event       CTFEvent  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+
+  @@unique([eventId, challengeId])
+  @@index([eventId])
+  @@index([challengeId])
+}
+
+model CTFTeam {
+  id         String           @id @default(cuid())
+  eventId    String
+  name       String
+  inviteCode String           @unique
+  createdAt  DateTime         @default(now())
+
+  event      CTFEvent         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  members    CTFTeamMember[]
+
+  @@index([eventId])
+}
+
+model CTFTeamMember {
+  id     String   @id @default(cuid())
+  teamId String
+  userId String
+
+  team   CTFTeam  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user   User     @relation(fields: [userId], references: [id])
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+}
+
+model Certificate {
+  id           String   @id @default(cuid())
+  userId       String
+  pathId       String
+  cloudinaryUrl String
+  generatedAt  DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+  path         Path     @relation(fields: [pathId], references: [id])
+
+  @@unique([userId, pathId])
+  @@index([userId])
+  @@index([pathId])
+}
+
+model SystemConfig {
+  id                         Int      @id @default(1)
+  maxConcurrentContainers    Int      @default(10)
+  rateLimitAttempts          Int      @default(3)
+  rateLimitWindowMinutes     Int      @default(10)
+  containerTimeoutMinutes    Int      @default(30)
+  updatedAt                  DateTime @updatedAt
+}

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(ls -la C:Usersfreddseu-security-platform/*.ts C:Usersfreddseu-security-platform/*.yml C:Usersfreddseu-security-platform/*.md C:Usersfreddseu-security-platform/*.example)",
+      "Bash(npx tsc:*)",
+      "Bash(npx prisma:*)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(node -e \"const p = require\\(''@prisma/client''\\); console.log\\(Object.keys\\(p\\).slice\\(0,30\\)\\)\")",
+      "Bash(node -e \"const p = require\\(''@prisma/client''\\); console.log\\(Object.keys\\(p.Prisma\\)\\)\")",
+      "Bash(node -e \"const p = require\\(''@prisma/client''\\); console.log\\(Object.keys\\(p.Prisma\\).slice\\(0,50\\)\\)\")",
+      "Bash(node -e \"const p = require\\(''@prisma/client''\\); console.log\\(Object.keys\\(p.Prisma\\).filter\\(k => k.toLowerCase\\(\\).includes\\(''role''\\)\\)\\)\")",
+      "Bash(ls -la /c/Users/fredd/seu-security-platform/*.ts)",
+      "Bash(ls -la C:/Users/fredd/seu-security-platform/*.ts)"
+    ]
+  }
+}
