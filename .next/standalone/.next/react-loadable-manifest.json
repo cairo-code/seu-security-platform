@@ -1,0 +1,18 @@
+{
+  "components/student/BoxPlayer.tsx -> @/components/Terminal": {
+    "id": 6600,
+    "files": [
+      "static/css/2cfb745127f62d0b.css",
+      "static/chunks/111acf76.e7debdcb4bc9b76c.js",
+      "static/chunks/863.88691567b6b33904.js"
+    ]
+  },
+  "components/student/CTFPlayer.tsx -> @/components/Terminal": {
+    "id": 6600,
+    "files": [
+      "static/css/2cfb745127f62d0b.css",
+      "static/chunks/111acf76.e7debdcb4bc9b76c.js",
+      "static/chunks/863.88691567b6b33904.js"
+    ]
+  }
+}
