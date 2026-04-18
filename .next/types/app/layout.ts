@@ -1,4 +1,4 @@
-// File: C:\Users\fredd\seu-security-platform\app\layout.tsx
+// File: /home/freddy/seu-security-platform/app/layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

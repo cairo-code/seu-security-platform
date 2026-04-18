@@ -1,4 +1,4 @@
-// File: C:\Users\fredd\seu-security-platform\app\api\auth\logout\route.ts
+// File: /home/freddy/seu-security-platform/app/api/auth/logout/route.ts
 import * as entry from '../../../../../../app/api/auth/logout/route.js'
 import type { NextRequest } from 'next/server.js'
 

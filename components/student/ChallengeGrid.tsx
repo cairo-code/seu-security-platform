@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 import Badge from "@/components/ui/Badge";
 
 type ChallengeType = "ROOM" | "BOX" | "CTF";

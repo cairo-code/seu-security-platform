@@ -1,4 +1,4 @@
-// File: C:\Users\fredd\seu-security-platform\app\(student)\challenges\page.tsx
+// File: /home/freddy/seu-security-platform/app/(student)/challenges/page.tsx
 import * as entry from '../../../../../app/(student)/challenges/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

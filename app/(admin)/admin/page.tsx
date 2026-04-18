@@ -164,7 +164,7 @@ export default async function AdminDashboardPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {recentUsers.map(user => (
+                                        {recentUsers.map((user: any) => (
                       <tr key={user.id} style={{ borderBottom: '1px solid var(--border-2)' }}>
                         <td style={{ padding: '10px 12px', fontSize: '13px' }}>{user.name}</td>
                         <td style={{ padding: '10px 12px', fontSize: '13px', fontFamily: 'monospace' }}>{user.universityId}</td>

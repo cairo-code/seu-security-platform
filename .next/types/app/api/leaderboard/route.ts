@@ -1,4 +1,4 @@
-// File: C:\Users\fredd\seu-security-platform\app\api\leaderboard\route.ts
+// File: /home/freddy/seu-security-platform/app/api/leaderboard/route.ts
 import * as entry from '../../../../../app/api/leaderboard/route.js'
 import type { NextRequest } from 'next/server.js'
 

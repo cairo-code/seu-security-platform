@@ -33,7 +33,7 @@ const variantStyles: Record<ButtonVariant, {
     borderColor: "transparent",
     color: "#8b949e",
     hoverBackgroundColor: "#21262d",
-    hoverColor: "#e6edf3",
+    
   },
   danger: {
     backgroundColor: "#2a0f08",
@@ -89,17 +89,16 @@ export default function Button({
   const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled && !loading) {
       e.currentTarget.style.backgroundColor = variantStyle.hoverBackgroundColor;
-      if ("hoverColor" in variantStyle) {
-        e.currentTarget.style.color = variantStyle.hoverColor;
-      }
+      // removed hoverColor logic, since it doesn't exist in variantStyle anymore
+
     }
-    style?.onMouseEnter?.(e);
+
   };
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.currentTarget.style.backgroundColor = variantStyle.backgroundColor;
     e.currentTarget.style.color = variantStyle.color;
-    style?.onMouseLeave?.(e);
+
   };
 
   return (

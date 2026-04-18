@@ -1,4 +1,4 @@
-// File: C:\Users\fredd\seu-security-platform\app\api\admin\challenges\route.ts
+// File: /home/freddy/seu-security-platform/app/api/admin/challenges/route.ts
 import * as entry from '../../../../../../app/api/admin/challenges/route.js'
 import type { NextRequest } from 'next/server.js'
 

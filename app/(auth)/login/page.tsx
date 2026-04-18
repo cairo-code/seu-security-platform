@@ -1,12 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { setAuth } from "@/lib/auth/client";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -132,6 +141,12 @@ export default function LoginPage() {
           <Button type="submit" variant="primary" loading={loading} style={{ width: "100%" }}>
             Sign in
           </Button>
+
+          <div style={{ marginTop: 8, textAlign: 'right' }}>
+            <a href="/forgot-password" style={{ fontSize: '13px', color: 'var(--primary)', textDecoration: 'underline', cursor: 'pointer' }}>
+              Forgot password?
+            </a>
+          </div>
         </form>
 
         <p

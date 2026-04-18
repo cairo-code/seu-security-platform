@@ -48,7 +48,7 @@ export default async function AdminChallengesPage() {
     },
   });
 
-  const transformed: ChallengeWithCounts[] = challenges.map((c) => ({
+  const transformed: ChallengeWithCounts[] = challenges.map((c: any) => ({
     id: c.id,
     title: c.title,
     description: c.description,
